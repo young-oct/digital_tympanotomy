@@ -23,12 +23,12 @@ from multiprocessing import cpu_count, Pool
 from tools.dicom_converter import oct_to_dicom
 from tools.auxiliary import folder_creator, arrTolist, listtoarr, load_from_oct_file
 from tools.geocrt import getPolarco, iniTri, polar2cart
-
+import copy
 if __name__ == '__main__':
     #
     oct_files = []
 
-    dst_root_path = '/Users/youngwang/Desktop/tympanotomy/data'
+    dst_root_path = '../data'
 
     directory = join(dst_root_path, 'OCT Format')
 
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     oct_files.sort()
     file_root_name = oct_files[-1].split('/')[-1].split('.')[0]
 
-    raw_data = load_from_oct_file(oct_files[0])
+    raw_data = load_from_oct_file(oct_files[1])
     data = raw_data
 
     # get polarcords & initialize triangularization
@@ -134,12 +134,23 @@ if __name__ == '__main__':
 
     for i in range(int(peaks_x[-1] - peaks_x[0]) + 1):
         peaks_locs, _ = find_peaks(slice_m[peaks_x[0] + i, :])
-        peak_wid[i] = peaks_locs[-1] - peaks_locs[0]
 
-        peak_loc[i] = peaks_locs[-1]
+        if len(peaks_locs) > 1:
+
+            peak_wid[i] = peaks_locs[-1] - peaks_locs[0]
+            peak_loc[i] = peaks_locs[-1]
+
+        else:
+            pass
+
+    #remove all the outliers
+    # peak_loc = peak_loc[peak_loc > peak_loc.mean()]
 
     for i in range(int(peaks_x[-1] - peaks_x[0]) + 1):
         ax[3].scatter(x=int(peak_loc[i]), y=int(peaks_x[0] + i))
+
+    # for i in range(len(peak_loc)):
+    #     ax[3].scatter(x=int(peak_loc[i]), y=int(peaks_x[0] + i))
 
     np.median(peak_wid)
     ax[3].imshow(slice_m, cmap='gray',vmin = vmin, vmax = vmax)
@@ -157,16 +168,18 @@ if __name__ == '__main__':
         for j in range(x_range):
             peaks, _ = find_peaks(slice_m[peaks_x[0] + j, :])
 
-            if len(peaks) != 0:
+            if len(peaks) > 1:
 
                 peak_loc_3d[i,j] = peaks[-1]
                 peak_wid_3d[i,j] = peaks[-1] - peaks[0]
             else:
                 pass
 
-    TM_thickness = np.median(peak_wid_3d)
+    TM_thickness = 1.2*np.median(peak_wid_3d)
 
-    TM_remove = data
+
+
+    TM_remove = copy.deepcopy(data)
     for i in range(y_range):
         idx = int(i + peaks_y[0])
         slice_m = TM_remove[:, idx, :]
@@ -180,26 +193,25 @@ if __name__ == '__main__':
     plt.tight_layout()
     plt.show()
 
-    patient_info = {'PatientName': 'RESEARCH',
-                    'PatientBirthDate': '20220707',
-                    'PatientSex': 'F',
-                    'PatientAge': '0Y',
-                    'PatientID': '202207070001',
-                    'SeriesDescription': 'Right Ear',
-                    'StudyDescription': 'OCT 3D'}
-
-    # temp_path = 'original'
-    temp_path = 'TM removal'
-
-    dicom_path = join(dst_root_path, 'DICOM', temp_path)
-
-    folder_creator(dicom_path)
-
-    resolutionx, resolutiony, resolutionz = 0.026, 0.026, 0.030
-
-    oct_to_dicom(TM_remove, resolutionx=resolutionx,
-                 resolutiony=resolutiony,resolutionz = resolutionz,
-                 dicom_folder=dicom_path,
-                 **patient_info)
-
-    print('Done')
+    # # temp_path = 'original'
+    # temp_path = 'TM removal'
+    # patient_info = {'PatientName': 'RESEARCH',
+    #                 'PatientBirthDate': '20220707',
+    #                 'PatientSex': 'M',
+    #                 'PatientAge': '0Y',
+    #                 'PatientID': '202207070001',
+    #                 'SeriesDescription': temp_path,
+    #                 'StudyDescription': 'OCT 3D'}
+    #
+    # dicom_path = join(dst_root_path, 'DICOM', temp_path)
+    #
+    # folder_creator(dicom_path)
+    #
+    # resolutionx, resolutiony, resolutionz = 0.026, 0.026, 0.030
+    #
+    # oct_to_dicom(TM_remove, resolutionx=resolutionx,
+    #              resolutiony=resolutiony,resolutionz = resolutionz,
+    #              dicom_folder=dicom_path,
+    #              **patient_info)
+    #
+    # print('Done')
