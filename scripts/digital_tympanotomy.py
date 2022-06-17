@@ -26,6 +26,7 @@ from tools.dicom_converter import oct_to_dicom
 from tools.auxiliary import folder_creator, arrTolist, listtoarr, load_from_oct_file
 from tools.geocrt import getPolarco, iniTri, polar2cart
 import copy
+
 if __name__ == '__main__':
     #
     oct_files = []
@@ -41,7 +42,7 @@ if __name__ == '__main__':
     oct_files.sort()
     file_root_name = oct_files[-1].split('/')[-1].split('.')[0]
 
-    raw_data = load_from_oct_file(oct_files[1])
+    raw_data = load_from_oct_file(oct_files[-1])
     data = raw_data
 
     # get polarcords & initialize triangularization
@@ -200,10 +201,10 @@ if __name__ == '__main__':
     ax[1,1].set_axis_off()
 
 
-    plt.tight_layout()
-    plt.show()
-
-    # temp_path = 'original'
+    # plt.tight_layout()
+    # plt.show()
+    # #
+    # # temp_path = 'original'
     # temp_path = 'TM removal'
     # patient_info = {'PatientName': 'RESEARCH',
     #                 'PatientBirthDate': '20220707',
