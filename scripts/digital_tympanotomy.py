@@ -201,28 +201,28 @@ if __name__ == '__main__':
     ax[1,1].set_axis_off()
 
 
-    # plt.tight_layout()
-    # plt.show()
-    # #
-    # # temp_path = 'original'
-    # temp_path = 'TM removal'
-    # patient_info = {'PatientName': 'RESEARCH',
-    #                 'PatientBirthDate': '20220707',
-    #                 'PatientSex': 'M',
-    #                 'PatientAge': '0Y',
-    #                 'PatientID': '202207070001',
-    #                 'SeriesDescription': temp_path,
-    #                 'StudyDescription': 'OCT 3D'}
+    plt.tight_layout()
+    plt.show()
     #
-    # dicom_path = join(dst_root_path, 'DICOM', temp_path)
-    #
-    # folder_creator(dicom_path)
-    #
-    # resolutionx, resolutiony, resolutionz = 0.026, 0.026, 0.030
-    #
-    # oct_to_dicom(TM_remove, resolutionx=resolutionx,
-    #              resolutiony=resolutiony,resolutionz = resolutionz,
-    #              dicom_folder=dicom_path,
-    #              **patient_info)
-    #
-    # print('Done')
+    # temp_path = 'original'
+    temp_path = 'TM removal'
+    patient_info = {'PatientName': 'RESEARCH',
+                    'PatientBirthDate': '20220707',
+                    'PatientSex': 'M',
+                    'PatientAge': '0Y',
+                    'PatientID': '202207070001',
+                    'SeriesDescription': temp_path,
+                    'StudyDescription': 'OCT 3D'}
+
+    dicom_path = join(dst_root_path, 'DICOM', temp_path)
+
+    folder_creator(dicom_path)
+
+    resolutionx, resolutiony, resolutionz = 0.026, 0.026, 0.030
+
+    oct_to_dicom(TM_remove, resolutionx=resolutionx,
+                 resolutiony=resolutiony,resolutionz = resolutionz,
+                 dicom_folder=dicom_path,
+                 **patient_info)
+
+    print('Done')
